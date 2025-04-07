@@ -1,0 +1,51 @@
+name: Project Automation
+
+on:
+  issues:
+    types: [opened, labeled, unlabeled, closed]
+  pull_request:
+    types: [opened, labeled, unlabeled, closed]
+
+jobs:
+  automate-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move newly opened issues to 'To Do'
+        if: github.event_name == 'issues' && github.event.action == 'opened'
+        uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Graphy
+          column: To Do
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move labeled issues to 'In Progress'
+        if: github.event_name == 'issues' && github.event.action == 'labeled' && github.event.label.name == 'in-progress'
+        uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Graphy
+          column: In Progress
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move closed issues to 'Done'
+        if: github.event_name == 'issues' && github.event.action == 'closed'
+        uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Graphy
+          column: Done
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move opened PRs to 'In Review'
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Graphy
+          column: In Review
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move merged PRs to 'Done'
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        uses: alex-page/github-project-automation-plus@v0.8.1
+        with:
+          project: Graphy
+          column: Done
+          repo-token: ${{ secrets.GITHUB_TOKEN }} 
